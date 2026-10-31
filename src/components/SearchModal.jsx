@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { Search, X, ArrowRight, Sparkles } from 'lucide-react';
 
@@ -6,6 +6,13 @@ export default function SearchModal() {
   const { lang, isSearchOpen, setIsSearchOpen, setActiveProductModal, products } = useShop();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('All');
+
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    const onKey = (e) => e.key === 'Escape' && setIsSearchOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isSearchOpen, setIsSearchOpen]);
 
   if (!isSearchOpen) return null;
 
@@ -37,7 +44,7 @@ export default function SearchModal() {
   });
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Search">
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={() => setIsSearchOpen(false)}
@@ -62,6 +69,7 @@ export default function SearchModal() {
             <button
               onClick={() => setIsSearchOpen(false)}
               className="p-1 rounded-full text-brand-muted hover:text-brand-noir"
+              aria-label="Close search"
             >
               <X className="w-5 h-5" />
             </button>
@@ -85,7 +93,7 @@ export default function SearchModal() {
           </div>
 
           {/* Instant Search Results */}
-          <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-1">
+          <div className="max-h-[50vh] overflow-y-auto overscroll-contain space-y-3 pr-1">
             {results.length === 0 ? (
               <div className="py-12 text-center text-brand-muted text-sm">
                 {lang === 'ar' ? 'لم نجد عطوراً مطابقة لبحثك.' : 'No fragrances found matching your search.'}

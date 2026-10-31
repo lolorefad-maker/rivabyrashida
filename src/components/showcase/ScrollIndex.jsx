@@ -95,17 +95,15 @@ export default function ScrollIndex({ id = 'elements' }) {
         {/* header label */}
         <div className="absolute left-5 right-5 top-[88px] z-20 flex items-center justify-between text-white md:left-[6%] md:right-[6%]">
           <span className="text-[10.5px] uppercase tracking-[0.34em] text-white/70">{lang === 'ar' ? 'العناصر الأربعة' : 'The four elements'}</span>
-          <motion.button
+          {/* CSS keyframe (restarted by the key) — a JS mount animation here could get stuck at opacity 0 on iPhone */}
+          <button
             key={active}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
             onClick={shop}
-            className="group flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-[11px] backdrop-blur-md transition hover:bg-white hover:text-brand-noir"
+            className="group flex animate-fade-up items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-[11px] backdrop-blur-md transition hover:bg-white hover:text-brand-noir"
           >
             {lang === 'ar' ? `تسوّق أبراج ${ELEMENTS[active].ar}` : `Shop ${ELEMENTS[active].en} signs`}
             <ArrowIcon className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-          </motion.button>
+          </button>
         </div>
 
         {/* thumbnail strip */}

@@ -10,7 +10,7 @@ import SearchModal from './components/SearchModal';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import { EASE } from './components/motion/primitives';
-import { setLenis, scrollToTarget } from './lib/scroll';
+import { setLenis, scrollToTarget, useScrollLock } from './lib/scroll';
 
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 
@@ -50,11 +50,17 @@ function Curtain() {
 }
 
 function MainLayout() {
-  const { lang } = useShop();
+  const { lang, activeProductModal, isCartOpen, isSearchOpen } = useShop();
+  useScrollLock(Boolean(activeProductModal) || isCartOpen || isSearchOpen);
   const path = useHashRoute();
   const page = path.startsWith('about') ? 'about' : 'home';
   const section = page === 'home' ? path.split('/')[0] : '';
   const first = useRef(true);
+  // the page fade only belongs to page changes; on first load the hero's own intro starts at once
+  const firstPaint = useRef(true);
+  useEffect(() => {
+    firstPaint.current = false;
+  }, []);
   const [curtain, setCurtain] = useState(null);
   const lastPage = useRef(page);
   useEffect(() => {
@@ -96,7 +102,7 @@ function MainLayout() {
         <ScrollProgress />
         <Navbar />
         <AnimatePresence mode="wait">
-          <motion.main key={page} className="flex-1" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.55, duration: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+          <motion.main key={page} className="flex-1" initial={firstPaint.current ? false : { opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.55, duration: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
             {page === 'about' ? <AboutPage /> : <HomePage />}
           </motion.main>
         </AnimatePresence>

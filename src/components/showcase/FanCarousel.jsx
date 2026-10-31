@@ -8,7 +8,7 @@ import { Eyebrow, SectionTitle, PillButton, ArrowIcon, EASE, useT } from '../mot
  * is lifted out of the spread. Drag / swipe, arrow keys, click or let it auto-play.
  */
 export default function FanCarousel({ products: given, title, dark = false, id = 'find-your-sign' }) {
-  const { lang, addToCart, setActiveProductModal, inSection } = useShop();
+  const { lang, addToCart, activeProductModal, setActiveProductModal, inSection } = useShop();
   const products = given || inSection('fan');
   const t = useT();
   const n = products.length;
@@ -17,6 +17,8 @@ export default function FanCarousel({ products: given, title, dark = false, id =
   const [paused, setPaused] = useState(false);
   const [w, setW] = useState(1200);
   const ref = useRef(null);
+  const panned = useRef(false); // a swipe must not also count as a tap on a card
+  const touchedAt = useRef(0); // phones have no hover, so autoplay rests for a while after a touch instead
 
   useEffect(() => {
     const on = () => setW(window.innerWidth);
@@ -28,10 +30,10 @@ export default function FanCarousel({ products: given, title, dark = false, id =
   const go = useCallback((dir) => setActive((a) => (a + dir + n) % n), [n]);
 
   useEffect(() => {
-    if (!dealt || paused) return;
-    const id = setInterval(() => go(1), 4200);
+    if (!dealt || paused || activeProductModal) return;
+    const id = setInterval(() => Date.now() - touchedAt.current > 8000 && go(1), 4200);
     return () => clearInterval(id);
-  }, [dealt, paused, go]);
+  }, [dealt, paused, activeProductModal, go]);
 
   const onKey = (e) => {
     if (e.key === 'ArrowRight') go(lang === 'ar' ? -1 : 1);
@@ -64,14 +66,19 @@ export default function FanCarousel({ products: given, title, dark = false, id =
         />
       </div>
 
-      {/* the hand of cards */}
+      {/* the hand of cards — `isolate` keeps their z-indexes below the cart / modal */}
       <motion.div
-        className="relative mx-auto mt-10 select-none outline-none"
+        className="relative isolate mx-auto mt-10 select-none outline-none"
         style={{ height: cardH + (mobile ? 120 : 150), touchAction: 'pan-y' }}
         tabIndex={0}
         onKeyDown={onKey}
         onViewportEnter={() => setDealt(true)}
         viewport={{ once: true, amount: 0.35 }}
+        onPointerDown={() => {
+          panned.current = false;
+          touchedAt.current = Date.now();
+        }}
+        onPanStart={() => (panned.current = true)}
         onPanEnd={(_, info) => {
           if (Math.abs(info.offset.x) > 40) go(info.offset.x < 0 ? 1 : -1);
         }}
@@ -101,7 +108,12 @@ export default function FanCarousel({ products: given, title, dark = false, id =
               type="button"
               role="option"
               aria-selected={isActive}
-              onClick={() => (isActive ? setActiveProductModal(prod) : setActive(i))}
+              onClick={() => {
+                if (panned.current) return;
+                // any card opens straight away; it also moves to the front for when the modal closes
+                setActive(i);
+                setActiveProductModal(prod);
+              }}
               initial={false}
               animate={target}
               transition={

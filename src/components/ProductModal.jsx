@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ELEMENTS } from '../data/products';
 import { useShop } from '../context/ShopContext';
-import { X, Star, ShoppingBag, MessageCircle, Sparkles, Check, ChevronRight, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
+import { X, Star, ShoppingBag, MessageCircle, Sparkles, ShieldCheck, Truck } from 'lucide-react';
+import { WHATSAPP } from './Footer';
+import { EASE } from './motion/primitives';
 
 export default function ProductModal() {
-  const { lang, activeProductModal, setActiveProductModal, addToCart } = useShop();
+  const { activeProductModal } = useShop();
+  // keyed by product so size / quantity / photo start fresh for every perfume
+  return <AnimatePresence>{activeProductModal && <ModalBody key={activeProductModal.id} product={activeProductModal} />}</AnimatePresence>;
+}
+
+function ModalBody({ product }) {
+  const { lang, setActiveProductModal, addToCart } = useShop();
   const [selectedSize, setSelectedSize] = useState('100 ML');
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
 
-  if (!activeProductModal) return null;
-
-  const product = activeProductModal;
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && setActiveProductModal(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [setActiveProductModal]);
 
   const priceMap = {
     '50 ML': product.price * 0.7,
@@ -31,11 +42,21 @@ export default function ProductModal() {
     const text = encodeURIComponent(
       `Hello RÍVA by Rashida! I would like to order: ${product.nameEn} (${product.archetypeEn}) - ${selectedSize} (Qty: ${quantity}) - ${currentPrice.toFixed(2)} JOD. Delivery in Jordan.`
     );
-    window.open(`https://wa.me/962790000000?text=${text}`, '_blank');
+    window.open(`${WHATSAPP}?text=${text}`, '_blank');
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <motion.div
+      className="fixed inset-0 z-50 overflow-y-auto overscroll-contain"
+      data-lenis-prevent
+      role="dialog"
+      aria-modal="true"
+      aria-label={product.nameEn}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
@@ -43,19 +64,27 @@ export default function ProductModal() {
       />
 
       <div className="min-h-full flex items-center justify-center p-3 sm:p-6 lg:p-8">
-        <div className="relative w-full max-w-4xl bg-brand-surface rounded-3xl shadow-2xl border border-brand-border overflow-hidden z-10 flex flex-col md:flex-row max-h-[92vh] md:max-h-[85vh]">
-          
-          {/* Close Button */}
-          <button
-            onClick={() => setActiveProductModal(null)}
-            className="absolute top-4 end-4 z-20 p-2 rounded-full bg-white/80 hover:bg-white text-brand-noir border border-brand-border shadow-md transition-all"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+        {/* phone: the whole card scrolls; desktop: only the details column scrolls */}
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 24, scale: 0.98 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="relative w-full max-w-4xl bg-brand-surface rounded-3xl shadow-2xl border border-brand-border z-10 flex flex-col md:flex-row max-h-[90dvh] md:max-h-[85vh] overflow-y-auto overscroll-contain md:overflow-hidden"
+        >
+          {/* Close Button — stays pinned while the card scrolls on phones */}
+          <div className="sticky top-0 z-20 flex h-0 justify-end md:absolute md:end-0 md:top-0">
+            <button
+              onClick={() => setActiveProductModal(null)}
+              className="m-3 h-fit p-2 rounded-full bg-white/80 hover:bg-white text-brand-noir border border-brand-border shadow-md transition-all"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* Left Column: Gallery & Interactive Zoom */}
-          <div className="w-full md:w-1/2 p-6 flex flex-col justify-between bg-stone-900 border-b md:border-b-0 md:border-e border-brand-border/40 text-white">
+          <div className="w-full shrink-0 md:shrink md:w-1/2 p-6 flex flex-col justify-between bg-stone-900 border-b md:border-b-0 md:border-e border-brand-border/40 text-white">
             <div
               className="relative aspect-square rounded-2xl overflow-hidden bg-black cursor-zoom-in group"
               onClick={() => setIsZoomed(!isZoomed)}
@@ -94,7 +123,7 @@ export default function ProductModal() {
           </div>
 
           {/* Right Column: Scent Profile, Notes, Size, Order Actions */}
-          <div className="w-full md:w-1/2 p-6 sm:p-8 overflow-y-auto flex flex-col justify-between space-y-6">
+          <div className="w-full md:w-1/2 p-6 sm:p-8 md:overflow-y-auto md:overscroll-contain flex flex-col justify-between space-y-6">
             <div>
               {/* Category & Rating */}
               <div className="flex items-center justify-between text-xs text-brand-muted">
@@ -260,8 +289,8 @@ export default function ProductModal() {
 
           </div>
 
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

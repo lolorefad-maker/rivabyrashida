@@ -57,7 +57,7 @@ export default function ProductCard({ product, index = 0, compact = false }) {
           }}
           role="button"
           aria-label={t('Add to cart', 'أضف إلى السلة')}
-          className="absolute bottom-3 end-3 grid h-10 w-10 translate-y-3 place-items-center rounded-full bg-brand-green text-white opacity-0 shadow-glow-green transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100"
+          className="absolute bottom-3 end-3 grid h-10 w-10 translate-y-3 place-items-center rounded-full bg-brand-green text-white opacity-0 shadow-glow-green transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100"
         >
           <Plus className="h-4 w-4" />
         </motion.span>

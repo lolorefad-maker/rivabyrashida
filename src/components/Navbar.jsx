@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import { useShop } from '../context/ShopContext';
 import { Search, ShoppingBag, Menu, X } from 'lucide-react';
 import { EASE } from './motion/primitives';
+import { useScrollLock } from '../lib/scroll';
 
 export const NAV_LINKS = [
   { en: 'About', ar: 'عن ريفا', href: '#/about' },
@@ -29,6 +30,7 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  useScrollLock(open);
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     const prev = scrollY.getPrevious ? scrollY.getPrevious() : 0;
@@ -105,6 +107,7 @@ export default function Navbar() {
           <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="absolute inset-0 bg-brand-noir/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
             <motion.div
+              data-lenis-prevent
               initial={{ clipPath: 'inset(0 0 100% 0)' }}
               animate={{ clipPath: 'inset(0 0 0% 0)' }}
               exit={{ clipPath: 'inset(0 0 100% 0)' }}

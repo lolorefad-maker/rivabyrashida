@@ -83,6 +83,7 @@ export default function CartDrawer() {
             exit={{ x: lang === 'ar' ? '-100%' : '100%' }}
             transition={{ duration: 0.6, ease: EASE }}
             className="absolute inset-y-0 end-0 flex w-full max-w-[440px] flex-col bg-brand-bg shadow-2xl"
+            data-lenis-prevent
             role="dialog"
             aria-label={t('Shopping bag', 'حقيبة التسوق')}
           >
@@ -126,7 +127,7 @@ export default function CartDrawer() {
                     </div>
                   </div>
 
-                  <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-6 py-5">
+                  <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-6 py-5">
                     {cart.length === 0 ? (
                       <div className="flex h-full flex-col items-center justify-center py-16 text-center">
                         <ShoppingBag className="h-10 w-10 text-brand-muted/40" />
@@ -198,7 +199,7 @@ export default function CartDrawer() {
 
               {step === 'details' && (
                 <motion.form key="details" onSubmit={submit} noValidate initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease: EASE }} className="flex min-h-0 flex-1 flex-col">
-                  <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
+                  <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-6 py-5">
                     <Field label={t('Full name', 'الاسم الكامل')} error={errors.name}>
                       <input className={inputCls} autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                     </Field>

@@ -31,7 +31,7 @@ body {
 /* Lenis */
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: hidden; }
+/* page lock while an overlay is open is done on <body> (see lib/scroll.js) so sticky sections keep their place */
 
 /* Hero frame: rectangle with concave (inverted) corners, like the reference */
 .concave-frame {

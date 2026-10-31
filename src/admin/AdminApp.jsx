@@ -35,6 +35,10 @@ function chime() {
   } catch {}
 }
 
+// One shared admin account: whoever knows its password can sign in. Its email is set on the host
+// (VITE_ADMIN_EMAIL), so the login page only asks for the password.
+const ADMIN_EMAIL = import.meta.env?.VITE_ADMIN_EMAIL || '';
+
 function Login({ onDone, lang, setLang }) {
   const t = (en, ar) => (lang === 'ar' ? ar : en);
   const [email, setEmail] = useState('');
@@ -47,9 +51,10 @@ function Login({ onDone, lang, setLang }) {
     setErr('');
     try {
       const db = await getDb();
-      onDone(await db.signIn(email.trim(), password));
+      onDone(await db.signIn((ADMIN_EMAIL || email).trim(), password));
     } catch (e2) {
-      setErr(e2.message === 'Wrong password' ? t('Wrong password', 'كلمة المرور غير صحيحة') : e2.message);
+      const wrong = e2.message === 'Wrong password' || /invalid login credentials/i.test(e2.message);
+      setErr(wrong ? t('Wrong password', 'كلمة المرور غير صحيحة') : e2.message);
     } finally {
       setBusy(false);
     }
@@ -89,7 +94,7 @@ function Login({ onDone, lang, setLang }) {
           <p className="mt-1 text-[9px] uppercase tracking-[0.5em] text-[#C9A46A]">{t('Atelier · Admin', 'لوحة التحكم')}</p>
         </div>
         <div className="mt-10 space-y-4">
-          {HAS_SUPABASE && (
+          {HAS_SUPABASE && !ADMIN_EMAIL && (
             <input className={inputDark} type="email" autoComplete="username" placeholder={t('Email', 'البريد الإلكتروني')} value={email} onChange={(e) => setEmail(e.target.value)} />
           )}
           <input className={inputDark} type="password" autoComplete="current-password" placeholder={t('Password', 'كلمة المرور')} value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
