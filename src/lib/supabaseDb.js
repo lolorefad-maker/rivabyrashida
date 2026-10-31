@@ -7,7 +7,9 @@ import { createClient } from '@supabase/supabase-js';
 import { normalizeProduct } from './catalog';
 import { compressImage } from './images';
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+// accept the URL as copied from the dashboard's Data API page too (…supabase.co/rest/v1/)
+const SUPABASE_URL = String(import.meta.env.VITE_SUPABASE_URL).trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+const supabase = createClient(SUPABASE_URL, String(import.meta.env.VITE_SUPABASE_ANON_KEY).trim());
 const BUCKET = 'products';
 
 const fromRow = (r) =>
