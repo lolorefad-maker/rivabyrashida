@@ -100,9 +100,7 @@ export default function TestimonialsSection() {
         <div className="mt-10 flex items-center justify-center gap-3">
           {TESTIMONIALS.map((r, k) => (
             <button key={r.id} onClick={() => setI(k)} aria-label={`Review ${k + 1}`} className="relative h-2 overflow-hidden rounded-full bg-brand-border" style={{ width: k === i ? 36 : 8, transition: 'width .5s' }}>
-              {k === i && (
-                <motion.span key={i} initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 7, ease: 'linear' }} className="absolute inset-y-0 start-0 bg-brand-green" />
-              )}
+              {k === i && <span key={i} className="progress-fill absolute inset-0 bg-brand-green" />}
             </button>
           ))}
         </div>

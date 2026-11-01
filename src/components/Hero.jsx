@@ -38,7 +38,7 @@ export default function Hero() {
     <section ref={ref} className="relative overflow-hidden pt-[76px]" aria-label="Hero">
       <div className="mx-auto grid max-w-[1320px] items-center gap-12 px-5 pb-16 pt-10 sm:px-8 lg:min-h-[calc(100vh-76px)] lg:grid-cols-[1.02fr_1fr] lg:gap-6 lg:pb-20 lg:pt-6">
         {/* Copy */}
-        <motion.div style={{ y: textY, opacity: fade }} className="relative z-10 order-2 lg:order-1">
+        <motion.div style={{ y: textY, opacity: fade }} className="relative z-10 order-2 will-change-transform lg:order-1">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -104,7 +104,7 @@ export default function Hero() {
 
         {/* Visual */}
         <div className="relative order-1 mx-auto w-full max-w-[560px] lg:order-2 lg:ms-auto lg:me-2" onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0); }}>
-          <motion.div style={{ y: frameY }} className="relative aspect-[0.9] w-full" >
+          <motion.div style={{ y: frameY }} className="relative aspect-[0.9] w-full will-change-transform">
             {/* frame */}
             <motion.div
               initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
@@ -128,13 +128,10 @@ export default function Hero() {
               transition={{ duration: 1.6, ease: EASE, delay: 0.5 }}
               className="absolute left-[27%] top-0 z-10 w-[46%]"
             >
-              <motion.img
+              <img
                 src={hero.bottleOnly}
                 alt={`RÍVA ${hero.nameEn} Extrait de Parfum`}
-                style={{ rotate: -8 }}
-                className="w-full drop-shadow-[0_40px_40px_rgba(40,15,0,0.55)]"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="animate-bottle-float w-full drop-shadow-[0_40px_40px_rgba(40,15,0,0.55)]"
                 fetchPriority="high"
               />
             </motion.div>
@@ -152,7 +149,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: EASE, delay: 1.5 }}
               whileHover={{ y: -4 }}
-              className="absolute bottom-[5%] left-[12%] right-[12%] z-30 flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-black/35 px-5 py-4 text-start text-white backdrop-blur-md"
+              className="absolute bottom-[5%] left-[12%] right-[12%] z-30 flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-black/35 px-5 py-4 text-start text-white backdrop-blur-md max-lg:bg-black/55 max-lg:backdrop-blur-none"
             >
               <span>
                 <span className="block text-[9px] uppercase tracking-[0.3em] text-brand-gold-light">{t('Featured flacon', 'العطر المميز')}</span>

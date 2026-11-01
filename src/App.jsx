@@ -69,6 +69,8 @@ function MainLayout() {
   }, [page]);
 
   useEffect(() => {
+    // Lenis never smooths touch, but still costs work every frame — phones keep native scrolling
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
     setLenis(lenis);
     let id;

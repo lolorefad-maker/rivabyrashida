@@ -55,7 +55,7 @@ export default function BestsellersSection() {
         >
           <div className="absolute inset-[-10%] grid grid-cols-3 gap-3 opacity-90">
             {cols.map((col, ci) => (
-              <motion.div key={ci} style={{ y: ci === 1 ? colDown : colUp }} className="flex flex-col gap-3">
+              <motion.div key={ci} style={{ y: ci === 1 ? colDown : colUp }} className="flex flex-col gap-3 will-change-transform">
                 {[...col, ...col].map((p, i) => (
                   <img key={`${p.id}-${i}`} src={p.bottleImage} alt="" loading="lazy" className="aspect-square w-full rounded-xl object-cover" />
                 ))}

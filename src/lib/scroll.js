@@ -6,9 +6,11 @@ export const setLenis = (l) => {
   lenis = l;
 };
 export const scrollToTarget = (target, opts = {}) => {
-  if (lenis) lenis.scrollTo(target, { offset: -72, duration: 1.4, ...opts });
-  else if (typeof target === 'number') window.scrollTo({ top: target, behavior: opts.immediate ? 'auto' : 'smooth' });
-  else target?.scrollIntoView?.({ behavior: 'smooth' });
+  if (lenis) return lenis.scrollTo(target, { offset: -72, duration: 1.4, ...opts });
+  // native (phones): same header offset as Lenis
+  const offset = opts.offset ?? -72;
+  const top = (typeof target === 'number' ? target : target.getBoundingClientRect().top + window.scrollY) + offset;
+  window.scrollTo({ top: Math.max(0, top), behavior: opts.immediate ? 'auto' : 'smooth' });
 };
 
 /* Freeze the page behind overlays (menu, modal, cart, search). Counted, so two overlays never unlock each other.

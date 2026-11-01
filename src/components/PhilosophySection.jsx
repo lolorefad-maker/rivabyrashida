@@ -114,9 +114,9 @@ export default function PhilosophySection() {
             ))}
           </div>
 
-          <motion.div style={{ scale: archScale }} className="relative order-1 mx-auto h-[440px] w-[300px] md:order-2 lg:h-[500px] lg:w-[340px]">
+          <div className="relative order-1 mx-auto h-[440px] w-[300px] md:order-2 lg:h-[500px] lg:w-[340px]">
             <motion.div
-              style={{ clipPath: archClip, background: 'linear-gradient(180deg,#C9CDB4 0%,#9EA889 55%,#6F7C5B 100%)' }}
+              style={{ scale: archScale, clipPath: archClip, background: 'linear-gradient(180deg,#C9CDB4 0%,#9EA889 55%,#6F7C5B 100%)' }}
               className="absolute inset-0 overflow-hidden"
             >
               <div className="absolute inset-x-0 top-0 h-1/2 bg-[radial-gradient(60%_60%_at_50%_30%,rgba(255,255,255,.55),transparent)]" />
@@ -125,10 +125,10 @@ export default function PhilosophySection() {
               src={taurus.bottleOnly}
               alt={`RÍVA ${taurus.nameEn}`}
               style={{ y: bottleY }}
-              className="absolute bottom-[18%] left-[17%] w-[66%] drop-shadow-[0_30px_30px_rgba(10,30,10,.45)]"
+              className="absolute bottom-[18%] left-[17%] w-[66%] drop-shadow-[0_30px_30px_rgba(10,30,10,.45)] will-change-transform"
               loading="lazy"
             />
-          </motion.div>
+          </div>
 
           <div className="order-3 grid grid-cols-2 gap-8 text-center md:grid-cols-1 md:gap-24 md:text-start">
             {statsR.map((s, i) => (

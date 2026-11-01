@@ -95,7 +95,7 @@ export default function Footer() {
       </div>
 
       <div className="relative mt-16 overflow-hidden" aria-hidden="true">
-        <motion.div style={{ y: bigY, opacity: bigOpacity }} className="select-none text-center font-serif text-[29vw] leading-[0.78] tracking-[-0.02em] text-white/[0.07]">
+        <motion.div style={{ y: bigY, opacity: bigOpacity }} className="select-none will-change-transform text-center font-serif text-[29vw] leading-[0.78] tracking-[-0.02em] text-white/[0.07]">
           RÍVA
         </motion.div>
       </div>

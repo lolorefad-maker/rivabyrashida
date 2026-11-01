@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useVelocity, useSpring, useTransform, useMotionValue, useAnimationFrame } from 'framer-motion';
+import { motion, useScroll, useVelocity, useSpring, useTransform, useMotionValue, useAnimationFrame, useInView } from 'framer-motion';
 import { useShop } from '../context/ShopContext';
 
 const ICONS = [
@@ -33,9 +33,12 @@ export default function TickerBar({ dark = false }) {
   const velocity = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 });
   const factor = useTransform(velocity, [-1000, 0, 1000], [-4, 0, 4], { clamp: false });
   const dir = useRef(1);
+  const ref = useRef(null);
+  const onScreen = useInView(ref, { margin: '120px 0px' });
   const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
 
   useAnimationFrame((_, delta) => {
+    if (!onScreen) return; // no per-frame work once scrolled past
     let move = dir.current * -1.4 * (delta / 1000);
     const f = factor.get();
     if (f < 0) dir.current = -1;
@@ -47,10 +50,11 @@ export default function TickerBar({ dark = false }) {
   const row = [...words, ...words];
   return (
     <div
+      ref={ref}
       className={`relative overflow-hidden border-y py-[18px] ${dark ? 'border-white/10 bg-brand-noir text-white/80' : 'border-brand-border bg-brand-bg-light/70 text-brand-noir/70'}`}
       dir="ltr"
     >
-      <motion.div style={{ x }} className="flex w-max whitespace-nowrap">
+      <motion.div style={{ x }} className="flex w-max whitespace-nowrap will-change-transform">
         {[0, 1].map((k) => (
           <div key={k} className="flex shrink-0 items-center">
             {row.map((w, i) => (

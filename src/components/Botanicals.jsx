@@ -106,13 +106,16 @@ export function GoldDust({ count = 14, className = '' }) {
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
       {dots.map((d, i) => (
-        <motion.span
+        <span
           key={i}
           className="absolute bottom-0 rounded-full bg-[#FFD9A0]"
-          style={{ left: `${d.left}%`, width: d.size, height: d.size, boxShadow: '0 0 8px 2px rgba(255,200,120,.6)' }}
-          initial={{ y: 0, opacity: 0 }}
-          animate={{ y: [-10, -420], opacity: [0, 1, 0] }}
-          transition={{ duration: d.dur, delay: d.delay, repeat: Infinity, ease: 'linear' }}
+          style={{
+            left: `${d.left}%`,
+            width: d.size,
+            height: d.size,
+            boxShadow: '0 0 8px 2px rgba(255,200,120,.6)',
+            animation: `dust-rise ${d.dur}s linear ${d.delay}s infinite both`,
+          }}
         />
       ))}
     </div>

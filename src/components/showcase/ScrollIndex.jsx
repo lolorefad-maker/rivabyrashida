@@ -17,12 +17,14 @@ function Panel({ item, i, n, s, lang, products }) {
   const posterY = useTransform(s, [i - 1, i, i + 1], [180, 0, -120]);
   const posterR = useTransform(s, [i - 1, i, i + 1], [8, -2, -8]);
   const nameX = useTransform(s, [i - 1, i, i + 1], ['30%', '0%', '-30%']);
+  // only the current panel and the one wiping in are visible — skip painting the rest
+  const visibility = useTransform(s, (v) => (v > i - 1 && v < i + 1 ? 'visible' : 'hidden'));
   const signs = products.filter((p) => p.element === item.id).slice(0, 4);
 
   return (
-    <motion.div style={{ clipPath: clip, zIndex: i }} className="absolute inset-0 overflow-hidden" aria-hidden={false}>
+    <motion.div style={{ clipPath: clip, zIndex: i, visibility }} className="absolute inset-0 overflow-hidden" aria-hidden={false}>
       {/* full-bleed backdrop made from the poster */}
-      <motion.div style={{ scale: bgScale }} className="absolute inset-0">
+      <motion.div style={{ scale: bgScale }} className="absolute inset-0 will-change-transform">
         <img src={item.poster} alt="" className="h-full w-full object-cover blur-[22px] saturate-[1.3] md:blur-[38px]" />
       </motion.div>
       <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${item.tone}cc 0%, ${item.tone}99 45%, #0b0b0aee 100%)` }} />
@@ -38,7 +40,7 @@ function Panel({ item, i, n, s, lang, products }) {
 
       {/* crisp poster in the middle */}
       <div className="absolute inset-x-0 top-[19%] flex justify-center md:top-[12%]">
-        <motion.div style={{ y: posterY, rotate: posterR }} className="aspect-[739/917] h-[42vh] max-h-[640px] overflow-hidden rounded-[18px] shadow-[0_40px_80px_-20px_rgba(0,0,0,.7)] ring-1 ring-white/20 md:h-[58vh]">
+        <motion.div style={{ y: posterY, rotate: posterR }} className="will-change-transform aspect-[739/917] h-[42vh] max-h-[640px] overflow-hidden rounded-[18px] shadow-[0_40px_80px_-20px_rgba(0,0,0,.7)] ring-1 ring-white/20 md:h-[58vh]">
           <img src={item.poster} alt={`RÍVA ${item.en} signs`} className="h-full w-full object-cover" loading="lazy" />
         </motion.div>
       </div>
