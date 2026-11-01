@@ -60,7 +60,7 @@ begin
   end loop;
   new.items    := fixed;
   new.subtotal := sub;
-  new.shipping := case when sub >= 60 then 0 else 3 end;
+  new.shipping := 0; -- delivery is free across Jordan
   new.total    := sub + new.shipping;
   new.status   := 'pending';
   if coalesce(length(new.customer ->> 'name'), 0) < 2 or coalesce(length(new.customer ->> 'phone'), 0) < 7 then

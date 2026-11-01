@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useShop, FREE_SHIPPING_FROM } from '../context/ShopContext';
+import { useShop } from '../context/ShopContext';
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import { orderNumber } from '../lib/catalog';
 import { WHATSAPP } from './Footer';
@@ -22,7 +22,7 @@ const inputCls =
   'w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-[14px] text-brand-noir outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/10';
 
 export default function CartDrawer() {
-  const { lang, cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal, cartCount, shipping, placeOrder } = useShop();
+  const { lang, cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal, cartCount, placeOrder } = useShop();
   const t = (en, ar) => (lang === 'ar' ? ar : en);
   const [step, setStep] = useState('bag'); // bag | details | done
   const [form, setForm] = useState({ name: '', phone: '', city: 'Amman', address: '', notes: '' });
@@ -69,7 +69,6 @@ export default function CartDrawer() {
     window.open(`${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
-  const pct = Math.min(100, (cartTotal / FREE_SHIPPING_FROM) * 100);
   const hasLive = cart.some((l) => !l.unavailable);
 
   return (
@@ -116,17 +115,6 @@ export default function CartDrawer() {
             <AnimatePresence mode="wait" initial={false}>
               {step === 'bag' && (
                 <motion.div key="bag" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease: EASE }} className="flex min-h-0 flex-1 flex-col">
-                  <div className="px-6 pt-4">
-                    <p className="text-[12px] text-brand-muted">
-                      {cartTotal >= FREE_SHIPPING_FROM
-                        ? t('You have free delivery across Jordan.', 'حصلت على توصيل مجاني داخل الأردن.')
-                        : t(`Add ${(FREE_SHIPPING_FROM - cartTotal).toFixed(2)} JOD for free delivery`, `أضف ${(FREE_SHIPPING_FROM - cartTotal).toFixed(2)} دينار للتوصيل المجاني`)}
-                    </p>
-                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-brand-border">
-                      <motion.div className="h-full bg-brand-gold" animate={{ width: `${pct}%` }} transition={{ duration: 0.8, ease: EASE }} />
-                    </div>
-                  </div>
-
                   <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-6 py-5">
                     {cart.length === 0 ? (
                       <div className="flex h-full flex-col items-center justify-center py-16 text-center">
@@ -183,7 +171,7 @@ export default function CartDrawer() {
 
                   {cart.length > 0 && (
                     <div className="border-t border-brand-border bg-white px-6 py-5">
-                      <Totals t={t} sub={cartTotal} ship={shipping} />
+                      <Totals t={t} total={cartTotal} />
                       <button
                         disabled={!hasLive || cart.some((l) => l.unavailable)}
                         onClick={() => setStep('details')}
@@ -222,7 +210,7 @@ export default function CartDrawer() {
                     {fail && <p className="rounded-xl bg-red-50 px-4 py-3 text-[12px] text-red-800">{fail}</p>}
                   </div>
                   <div className="border-t border-brand-border bg-white px-6 py-5">
-                    <Totals t={t} sub={cartTotal} ship={shipping} />
+                    <Totals t={t} total={cartTotal} />
                     <div className="mt-4 flex gap-3">
                       <button type="button" onClick={() => setStep('bag')} className="rounded-full border border-brand-border px-5 text-[12px]">
                         {t('Back', 'رجوع')}
@@ -262,21 +250,11 @@ export default function CartDrawer() {
   );
 }
 
-function Totals({ t, sub, ship }) {
+function Totals({ t, total }) {
   return (
-    <div className="space-y-1.5 text-[13px]">
-      <div className="flex justify-between text-brand-muted">
-        <span>{t('Subtotal', 'المجموع الفرعي')}</span>
-        <span className="text-brand-noir">{sub.toFixed(2)} JOD</span>
-      </div>
-      <div className="flex justify-between text-brand-muted">
-        <span>{t('Delivery', 'التوصيل')}</span>
-        <span className="text-brand-noir">{ship ? `${ship.toFixed(2)} JOD` : t('Free', 'مجاني')}</span>
-      </div>
-      <div className="flex justify-between border-t border-brand-border pt-2 font-serif text-[20px]">
-        <span>{t('Total', 'المجموع')}</span>
-        <span className="text-brand-green">{(sub + ship).toFixed(2)} JOD</span>
-      </div>
+    <div className="flex justify-between font-serif text-[20px]">
+      <span>{t('Total', 'المجموع')}</span>
+      <span className="text-brand-green">{total.toFixed(2)} JOD</span>
     </div>
   );
 }

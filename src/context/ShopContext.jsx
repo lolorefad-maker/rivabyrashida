@@ -5,8 +5,6 @@ import { STATIC_CATALOG, isLive, findStatic } from '../lib/catalog';
 const ShopContext = createContext();
 const CART_KEY = 'riva.cart.v1';
 
-export const SHIPPING_FEE = 3;
-export const FREE_SHIPPING_FROM = 60;
 export const sizePrice = (product, size) => Math.round(product.price * (size === '50 ML' ? 0.7 : 1) * 100) / 100;
 
 const loadCart = () => {
@@ -137,7 +135,7 @@ export function ShopProvider({ children }) {
   const liveLines = cart.filter((l) => !l.unavailable);
   const cartTotal = liveLines.reduce((s, l) => s + l.price * l.quantity, 0);
   const cartCount = cartRaw.reduce((s, l) => s + l.quantity, 0);
-  const shipping = cartTotal >= FREE_SHIPPING_FROM || cartTotal === 0 ? 0 : SHIPPING_FEE;
+  const shipping = 0; // delivery is free across Jordan (the database prices orders the same way)
 
   /** Sends the order to the admin panel (status: pending) */
   const placeOrder = async (customer) => {

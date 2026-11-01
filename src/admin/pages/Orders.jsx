@@ -81,7 +81,7 @@ function OrderCard({ o, products, setOrderStatus, deleteOrder, t, lang }) {
                   </div>
                   <div className="mt-4 space-y-1 border-t border-white/[0.06] pt-3 text-[12.5px] text-white/60">
                     <div className="flex justify-between"><span>{t('Subtotal', 'المجموع الفرعي')}</span><span>{money(o.subtotal)}</span></div>
-                    <div className="flex justify-between"><span>{t('Delivery', 'التوصيل')}</span><span>{money(o.shipping)}</span></div>
+                    {o.shipping > 0 && <div className="flex justify-between"><span>{t('Delivery', 'التوصيل')}</span><span>{money(o.shipping)}</span></div>}
                     <div className="flex justify-between font-serif text-[18px] text-white"><span>{t('Total', 'المجموع')}</span><span>{money(o.total)}</span></div>
                   </div>
                 </div>
